@@ -19,7 +19,6 @@ class XmlParser
     private $i=0;
 
     private $stack = array();
-    private $seek;
 
     public function __construct(){
         $this->parser = xml_parser_create();
@@ -89,17 +88,11 @@ class XmlParser
             }
         }
 
-        $tree = $this->treeFormat($tree);
         return $tree;
     }
 
 
-    public function treeFormat($tree){
 
-
-
-
-    }
 
 
 }
