@@ -19,6 +19,7 @@ class XmlParser
     private $i=0;
 
     private $stack = array();
+    private $seek;
 
     public function __construct(){
         $this->parser = xml_parser_create();
@@ -42,7 +43,7 @@ class XmlParser
 
     public function tag_open($parser,$tag_name,$tag_attr){
         if(!$this->parent){
-            $this->parent['id'] = 0;
+            $this->parent['id'] = false;
         }
         $this->data[$this->i] = array('name'=>$tag_name,'parent'=>$this->parent['id']);
         $this->parent = array('id'=>$this->i);
@@ -61,7 +62,12 @@ class XmlParser
         if($this->close_tag){
             return true;
         }
-        $this->data[$this->i]['data'] = $str_data;
+        if(!isset($this->data[$this->i])){
+            $this->i--;
+            $this->data[$this->i]['data'] .= $str_data;
+        }else{
+            $this->data[$this->i]['data'] = $str_data;
+        }
         $this->i++;
     }
 
@@ -73,14 +79,26 @@ class XmlParser
 
     public function getParent(){
 
-//        foreach ($this->data as $k=> $row){
-//            if(isset($row['parent']) === false){
-//                continue;
-//            }
-//            $this->data[$row['parent']]['child'][] = &$row;
-//        }
+        $tree  = array();
 
-        return $this->data;
+        foreach ($this->data as $key => $item) {
+            if(isset($this->data[$item['parent']]) && $item['parent'] !==false ){
+                $this->data[$item['parent']][$item['name']][] = &$this->data[$key];
+            }else{
+                $tree[0][$item['name']][] = &$this->data[$key];
+            }
+        }
+
+        $tree = $this->treeFormat($tree);
+        return $tree;
+    }
+
+
+    public function treeFormat($tree){
+
+
+
+
     }
 
 

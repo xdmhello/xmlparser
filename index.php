@@ -12,10 +12,8 @@ use App\XmlParser;
 $data = file_get_contents('http://news.qq.com/newsgn/rss_newsgn.xml');
 $xml = new XmlParser();
 try{
-    var_export($xml->parseToArray($data));
-
-
-
+    $xml->parseToArray($data);
+    var_export($xml->getParent());
 }catch (Exception $e){
     echo $e->getMessage();
 }
